@@ -650,6 +650,16 @@ func (st *initState) launchTerminalApplication(cpath, pwd string, cmdArgs []stri
 		groups = append(groups, gid)
 	}
 
+	if len(st.profile.DConfPath) > 0 {
+		st.log.Notice("Loading dconf configuration from: %v", st.profile.DConfPath)
+		dconfcmd := exec.Command("/usr/bin/dconf load < %v", st.profile.DConfPath)
+		err := cmd.Run()
+		if err != nil {
+			st.log.Warning("dconf loading of %v did not complete successfully: %v", st.profile.DConfPath, err)
+			return nil, err
+		}
+	}
+
 	tcmd := exec.Command("/usr/bin/gnome-terminal", "--hide-menubar", "--")
 	tstdout, err := tcmd.StdoutPipe()
 	if err != nil {
@@ -732,7 +742,7 @@ func (st *initState) launchApplication(cpath, pwd string, cmdArgs []string) (*ex
 			spath := path.Join(st.config.PrefixPath, "bin", "oz-seccomp")
 			cmdArgs = append([]string{"-r", "-p", "-", spath, "-mode=whitelist", cpath}, cmdArgs...)
 			cpath = path.Join(st.config.PrefixPath, "bin", "oz-seccomp-tracer")
-			 
+
 		} else {
 			cmdArgs = append([]string{"-mode=whitelist", cpath}, cmdArgs...)
 			cpath = path.Join(st.config.PrefixPath, "bin", "oz-seccomp")

@@ -65,6 +65,8 @@ type Profile struct {
 	ExternalForwarders []ExternalForwarder `json:"external_forwarders"`
 	// Indicates this profile runs inside a sandboxed terminal
 	IsSandboxedTerminal bool `json:"is_sandboxed_terminal"`
+	// Path for arbitrary dconf configuration
+	DConfPath string `json:"dconf_path"`
 }
 
 type ShutdownMode string
